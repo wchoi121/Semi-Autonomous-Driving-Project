@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scenario xmlns="http://opends.eu/drivingtask/scenario"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+        xsi:schemaLocation="http://opends.eu/drivingtask/scenario ../../Schema/scenario.xsd">
+        
+		<!--This file is pretty much for creating the dynamic parts of the environment (independent of the triggers) -->
+		<!--Includes traffic and moving pedestrians -->
+        
+        <environment>
+        	<weather>
+                <snowingPercentage>-1</snowingPercentage>
+        		<rainingPercentage>-1</rainingPercentage>
+        		<fogPercentage>-1</fogPercentage>
+        	</weather>
+        </environment>
+
+		<!-- Set up driving parameters for the participant's car -->
+        <driver>
+        	<car id="" ref="driverCar" profile="">
+        		<resetPoints>
+        			<resetPoint ref="reset1" />
+        			<resetPoint ref="reset2" />
+        		</resetPoints>
+        		
+        		<tires profile="">
+        			<type>winter</type>
+        			<size>16</size>
+        		</tires>
+        		
+        		<engine profile="">
+        			<engineOn>true</engineOn>
+        			<minSpeed>0</minSpeed>
+					<maxSpeed>180</maxSpeed>
+					<acceleration>5.0</acceleration>
+					<displacement>1800</displacement>
+					<minRPM>750</minRPM>
+					<maxRPM>7500</maxRPM>
+        		</engine>
+        		
+        		<cruiseControl>
+        			<acc>false</acc>
+        			<safetyDistance>
+        				<lateral>0</lateral>
+        				<forward>0</forward>
+    				</safetyDistance>
+    				<emergencyBrakeDistance>0</emergencyBrakeDistance>
+				<!--  <initialSpeed>40</initialSpeed>-->
+        		</cruiseControl>
+        		
+        		<transmission>
+        			<automatic>true</automatic>
+        			<reverse>3.182</reverse>
+        			<forward>
+	        			<vector jtype="java_lang_Float" size="6">
+							<entry>3.615</entry>
+							<entry>1.955</entry>
+							<entry>1.281</entry>
+							<entry>0.973</entry>
+							<entry>0.778</entry>
+							<entry>0.646</entry>
+						</vector>
+					</forward>
+        		</transmission>
+        		
+        		<suspension>
+					<stiffness>120</stiffness>
+					<compression>0.2</compression>
+					<damping>0.3</damping>
+        		</suspension>
+        		
+        		<wheel>
+        			<frictionSlip>50</frictionSlip>
+        		</wheel>
+        		
+        		<brake profile="">
+        			<decelerationFreeWheel>2.0</decelerationFreeWheel>
+        			<decelerationBrake>8.7</decelerationBrake>
+        		</brake>
+      
+				<!--This is what makes it a self-driving car (obviously)  		 -->
+        		<autoPilot>
+					<!--Important: Don't turn it on unless "y" button is pressed-->
+					<!--One, to make sure the participant is ready, rest of experiment won't start until button's pressed -->
+					<!--But also for another reason, which will be explained later -->
+					<enabled>false</enabled> 
+					
+					<!--These values are actually important for preventing the car from doing zig-zags when it gets smacked by the follower box-->
+					<!--So try not to change these values too much-->
+					<minDistanceFromPath>2.0</minDistanceFromPath>
+					<maxDistanceFromPath>4.0</maxDistanceFromPath>					
+					<curveTension>0.001</curveTension>
+					
+					<pathIsCycle>false</pathIsCycle>
+					<pathIsVisible>false</pathIsVisible>
+					
+					<!--The way OpenDS autopilot works is you pre-define what path it follows-->
+					<startWayPoint>WayPoint_2</startWayPoint>
+					<wayPoints>
+					
+						<!--You may notice that the first way point is actually pretty far away from where the car was set up in the scene file -->
+						<!--The reason for this is that when you tur off the autopilot function, change lanes or drive a far distance -->
+						<!--Then change autopilot back on, the car will drive back to the last way point -->
+						<!--By having the first way point far away, this will actually prevent that problem -->
+						<!--Otherwise, it'd severely limit the kind of take-over scenarios you can do-->
+						<wayPoint id="WayPoint_2"><translation><vector jtype="java_lang_Float" size="3"><entry>2.204541</entry><entry>-0.35273057</entry><entry>6000</entry></vector></translation><speed>40</speed></wayPoint>
+						<wayPoint id="WayPoint_26"><translation><vector jtype="java_lang_Float" size="3"><entry>2.204541</entry><entry>-0.3477659</entry><entry>800</entry></vector></translation><speed>40</speed></wayPoint>
+					</wayPoints>
+				</autoPilot>
+        	</car>
+        </driver>
+       
+		<!--Simulating the other cars on the road  -->
+        <traffic>
+  			<vehicle id="car1">
+				<modelPath>Models/Cars/drivingCars/CarBlue/Car.scene</modelPath>
+				<mass>800</mass>
+				<acceleration>6.0</acceleration>
+				<decelerationBrake>8.7</decelerationBrake>
+				<decelerationFreeWheel>2.0</decelerationFreeWheel>
+				<engineOn>false</engineOn>
+				<minDistanceFromPath>2.0</minDistanceFromPath>
+				<maxDistanceFromPath>4.0</maxDistanceFromPath>
+				<curveTension>0.05</curveTension>
+				<pathIsCycle>false</pathIsCycle>
+				<pathIsVisible>false</pathIsVisible>
+				
+				<!--Much like the autopilot, have to define the route for the other traffic -->
+				<startWayPoint>WayPoint_2</startWayPoint>
+				<wayPoints>
+					<wayPoint id="WayPoint_2"><translation><vector jtype="java_lang_Float" size="3"><entry>2.204541</entry><entry>-0.35273057</entry><entry>6900</entry></vector></translation><speed>40</speed></wayPoint>
+					<wayPoint id="WayPoint_3"><translation><vector jtype="java_lang_Float" size="3"><entry>2.204541</entry><entry>-0.35273057</entry><entry>6830</entry></vector></translation><speed>35</speed></wayPoint>
+					<wayPoint id="WayPoint_4"><translation><vector jtype="java_lang_Float" size="3"><entry>2.204541</entry><entry>-0.35273057</entry><entry>6770</entry></vector></translation><speed>35</speed></wayPoint>
+					<wayPoint id="WayPoint_4b"><translation><vector jtype="java_lang_Float" size="3"><entry>2.204541</entry><entry>-0.35273057</entry><entry>6720</entry></vector></translation><speed>35</speed></wayPoint>
+					
+					<!--This is to simulate the lead vehicle changing lanes due to a broken car in front of it -->
+					<!--That's why it was slowing down prior to the lane departure -->
+					<!--Eventually it'll return to the right lane -->
+					<wayPoint id="WayPoint_5"><translation><vector jtype="java_lang_Float" size="3"><entry>-1.55</entry><entry>-0.35273057</entry><entry>6700</entry></vector></translation><speed>35</speed></wayPoint>
+					<wayPoint id="WayPoint_6"><translation><vector jtype="java_lang_Float" size="3"><entry>-1.6</entry><entry>-0.35273057</entry><entry>6690</entry></vector></translation><speed>40</speed></wayPoint>
+					<wayPoint id="WayPoint_7"><translation><vector jtype="java_lang_Float" size="3"><entry>-1.6</entry><entry>-0.35273057</entry><entry>6600</entry></vector></translation><speed>40</speed></wayPoint>
+					<wayPoint id="WayPoint_8"><translation><vector jtype="java_lang_Float" size="3"><entry>2</entry><entry>-0.35273057</entry><entry>6450</entry></vector></translation><speed>50</speed></wayPoint>
+					<wayPoint id="WayPoint_9"><translation><vector jtype="java_lang_Float" size="3"><entry>2.204541</entry><entry>-0.35273057</entry><entry>6300</entry></vector></translation><speed>60</speed></wayPoint>
+					<wayPoint id="WayPoint_26"><translation><vector jtype="java_lang_Float" size="3"><entry>2.204541</entry><entry>-0.3477659</entry><entry>800</entry></vector></translation><speed>50</speed></wayPoint>
+				</wayPoints>
+        	</vehicle>
+       	
+	 		<vehicle id="car2">
+					<modelPath>Models/Cars/drivingCars/PurpleMitsubishi/Car.scene</modelPath>
+					<mass>800</mass>
+					<acceleration>6.0</acceleration>
+					<decelerationBrake>8.7</decelerationBrake>
+					<decelerationFreeWheel>2.0</decelerationFreeWheel>
+					<engineOn>false</engineOn>
+					<minDistanceFromPath>2.0</minDistanceFromPath>
+					<maxDistanceFromPath>4.0</maxDistanceFromPath>
+					<curveTension>0.05</curveTension>
+					<pathIsCycle>false</pathIsCycle>
+					<pathIsVisible>false</pathIsVisible>
+					<startWayPoint>WayPoint_2</startWayPoint>
+					<wayPoints>					
+						<wayPoint id="WayPoint_2"><translation><vector jtype="java_lang_Float" size="3"><entry>-1.6</entry><entry>-0.35273057</entry><entry>6210</entry></vector></translation><speed>30</speed></wayPoint>
+						<wayPoint id="WayPoint_3"><translation><vector jtype="java_lang_Float" size="3"><entry>-1.6</entry><entry>-0.35273057</entry><entry>5520</entry></vector></translation><speed>30</speed></wayPoint>
+						
+						<!--Car to the left suddenly changes lane right in front of the participant -->
+						<!--So they have to brake in response -->
+						<!--This car will eventually go back to the left lane -->
+						<wayPoint id="WayPoint_4"><translation><vector jtype="java_lang_Float" size="3"><entry>2</entry><entry>-0.35273057</entry><entry>5475</entry></vector></translation><speed>35</speed></wayPoint>
+						<wayPoint id="WayPoint_5"><translation><vector jtype="java_lang_Float" size="3"><entry>2.204541</entry><entry>-0.35273057</entry><entry>5465</entry></vector></translation><speed>40</speed></wayPoint>
+						<wayPoint id="WayPoint_6"><translation><vector jtype="java_lang_Float" size="3"><entry>2.204541</entry><entry>-0.35273057</entry><entry>5315</entry></vector></translation><speed>40</speed></wayPoint>
+						<wayPoint id="WayPoint_7"><translation><vector jtype="java_lang_Float" size="3"><entry>-1.6</entry><entry>-0.35273057</entry><entry>5275</entry></vector></translation><speed>35</speed></wayPoint>
+						<wayPoint id="WayPoint_8"><translation><vector jtype="java_lang_Float" size="3"><entry>-1.6</entry><entry>-0.35273057</entry><entry>500</entry></vector></translation><speed>35</speed></wayPoint>
+					</wayPoints>
+	        </vehicle>
+
+			<!--This car doesn't actually do anything besides drive slowly in the left lane-->
+			<!--It's just there as noise. Participant will lose sight of it shortly due to its slow driving speed -->
+	 		<vehicle id="car3">
+					<modelPath>Models/Cars/oldDrivingCars/CarRed/Car.scene</modelPath>
+					<mass>800</mass>
+					<acceleration>6.0</acceleration>
+					<decelerationBrake>8.7</decelerationBrake>
+					<decelerationFreeWheel>2.0</decelerationFreeWheel>
+					<engineOn>false</engineOn>
+					<minDistanceFromPath>2.0</minDistanceFromPath>
+					<maxDistanceFromPath>4.0</maxDistanceFromPath>
+					<curveTension>0.05</curveTension>
+					<pathIsCycle>false</pathIsCycle>
+					<pathIsVisible>false</pathIsVisible>
+					<startWayPoint>WayPoint_2</startWayPoint>
+					<wayPoints>					
+						<wayPoint id="WayPoint_2"><translation><vector jtype="java_lang_Float" size="3"><entry>-1.6</entry><entry>-0.35273057</entry><entry>6940</entry></vector></translation><speed>27</speed></wayPoint>
+						<wayPoint id="WayPoint_3"><translation><vector jtype="java_lang_Float" size="3"><entry>-1.6</entry><entry>-0.35273057</entry><entry>900</entry></vector></translation><speed>27</speed></wayPoint>
+					</wayPoints>
+        	</vehicle>
+
+
+ <!-- 		<pedestrian id="ped1">
+        		<modelPath>Models/Humans/female/female.scene</modelPath>
+				<mass>5</mass>
+				<animationStand>Stand</animationStand>
+				<animationWalk>WalkBaked</animationWalk>
+				<scale>0.9</scale>
+				<minDistanceFromPath>2.0</minDistanceFromPath>
+				<maxDistanceFromPath>4.0</maxDistanceFromPath>
+				<curveTension>0.05</curveTension>
+				<pathIsCycle>false</pathIsCycle>
+				<pathIsVisible>true</pathIsVisible>
+				<startWayPoint>WayPoint_16</startWayPoint>
+				<wayPoints>
+					<wayPoint id="WayPoint_16"><translation><vector jtype="java_lang_Float" size="3"><entry>8</entry><entry>-0.35</entry><entry>6650</entry></vector></translation><speed>1</speed></wayPoint>
+					<wayPoint id="WayPoint_50"><translation><vector jtype="java_lang_Float" size="3"><entry>6.5</entry><entry>-0.35</entry><entry>6650</entry></vector></translation><speed>1</speed></wayPoint>
+					<wayPoint id="WayPoint_51"><translation><vector jtype="java_lang_Float" size="3"><entry>5</entry><entry>-0.35</entry><entry>6650</entry></vector></translation><speed>1</speed></wayPoint>
+					<wayPoint id="WayPoint_52"><translation><vector jtype="java_lang_Float" size="3"><entry>3.5</entry><entry>-0.35</entry><entry>6650</entry></vector></translation><speed>1</speed></wayPoint>
+					<wayPoint id="WayPoint_53"><translation><vector jtype="java_lang_Float" size="3"><entry>2</entry><entry>-0.35</entry><entry>6650</entry></vector></translation><speed>1</speed></wayPoint>
+					<wayPoint id="WayPoint_54"><translation><vector jtype="java_lang_Float" size="3"><entry>0</entry><entry>-0.35</entry><entry>6650</entry></vector></translation><speed>1</speed></wayPoint>
+					<wayPoint id="WayPoint_55"><translation><vector jtype="java_lang_Float" size="3"><entry>-1.5</entry><entry>-0.35</entry><entry>6650</entry></vector></translation><speed>1</speed></wayPoint>
+					<wayPoint id="WayPoint_56"><translation><vector jtype="java_lang_Float" size="3"><entry>-3</entry><entry>-0.35</entry><entry>6650</entry></vector></translation><speed>1</speed></wayPoint>
+					
+				</wayPoints>
+        	</pedestrian>
+-->
+
+        </traffic>
+   
+        <road>
+		<!--These are just rough guesstimates. Need to revise them later to be more specific -->
+        	<lane id="0">
+                  <xMin>0.3</xMin>
+                  <xMax>4.1</xMax>
+            </lane>
+            <lane id="1">
+                  <xMin>-3.5</xMin>
+                  <xMax>0.3</xMax>
+            </lane>
+        </road>
+        
+</scenario>
